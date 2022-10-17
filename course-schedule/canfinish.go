@@ -1,5 +1,8 @@
 package course_schedule
 
+// https://en.wikipedia.org/wiki/Topological_sorting#Algorithms Depth-first search
+// https://ru.algorithmica.org/cs/shortest-paths/bfs/
+
 type G struct {
 	g         [][]int
 	L         []int
