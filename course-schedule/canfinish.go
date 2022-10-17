@@ -1,14 +1,14 @@
 package course_schedule
 
 // https://en.wikipedia.org/wiki/Topological_sorting#Algorithms Depth-first search
-// https://ru.algorithmica.org/cs/shortest-paths/bfs/
+// https://ru.algorithmica.org/cs/graph-traversals/cycle/
 
 type G struct {
 	g         [][]int
 	L         []int
 	required  []int
-	permanent map[int]struct{}
-	temporary map[int]bool
+	permanent []bool
+	temporary []bool
 	stop      bool
 }
 
@@ -16,8 +16,8 @@ func newG(numCourses int, prerequisites [][]int) *G {
 	g := G{
 		g:         make([][]int, numCourses),
 		L:         make([]int, 0, numCourses),
-		permanent: make(map[int]struct{}, numCourses),
-		temporary: make(map[int]bool, numCourses),
+		permanent: make([]bool, numCourses),
+		temporary: make([]bool, numCourses),
 		required:  make([]int, numCourses),
 	}
 	for _, v := range prerequisites {
@@ -27,12 +27,12 @@ func newG(numCourses int, prerequisites [][]int) *G {
 	return &g
 }
 
-func (g *G) bfs() bool {
+func (g *G) dfs() bool {
 	for n, c := range g.required {
 		if c > 0 {
 			continue
 		}
-		if _, ex := g.permanent[n]; ex {
+		if g.permanent[n] {
 			continue
 		}
 		g.visit(n)
@@ -47,7 +47,7 @@ func (g *G) bfs() bool {
 }
 
 func (g *G) visit(n int) {
-	if _, ex := g.permanent[n]; ex {
+	if g.permanent[n] {
 		return
 	}
 	if g.temporary[n] {
@@ -56,13 +56,17 @@ func (g *G) visit(n int) {
 	}
 	g.temporary[n] = true
 	for _, m := range g.g[n] {
+		if g.temporary[m] {
+			g.stop = true
+			return
+		}
 		g.visit(m)
 		if g.stop {
 			return
 		}
 	}
 	g.temporary[n] = false
-	g.permanent[n] = struct{}{}
+	g.permanent[n] = true
 	g.L = append(g.L, n)
 }
 
@@ -73,5 +77,5 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	if len(prerequisites) == 0 {
 		return true
 	}
-	return newG(numCourses, prerequisites).bfs()
+	return newG(numCourses, prerequisites).dfs()
 }
