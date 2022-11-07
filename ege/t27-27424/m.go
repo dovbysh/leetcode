@@ -1,5 +1,6 @@
 package t27_27424
 
+// https://inf-ege.sdamgia.ru/problem?id=27424
 import "math"
 
 func strageSum(a [][2]int) (int, error) {
