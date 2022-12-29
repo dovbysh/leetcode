@@ -11,13 +11,13 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}
 	start := 0
 	end := n
-	realmidinmergedarray := (n + m + 1) / 2
+	realmidinmergedarray := (n + m + 1) >> 1 // /2
 	var (
 		mid, leftAsize, leftBsize, leftA, leftB, rightA, rightB int
 	)
-
+	odd := (m+n)%2 == 0
 	for start <= end {
-		mid = (start + end) / 2
+		mid = (start + end) >> 1 // /2
 		leftAsize = mid
 		leftBsize = realmidinmergedarray - mid
 		// checking overflow
@@ -39,10 +39,10 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 
 		// if correct partition is done
 		if leftA <= rightB && leftB <= rightA {
-			if (m+n)%2 == 0 {
-				return (math.Max(float64(leftA), float64(leftB)) + math.Min(float64(rightA), float64(rightB))) / 2.0
+			if odd {
+				return float64(Max(leftA, leftB)+Min(rightA, rightB)) / 2.0
 			}
-			return math.Max(float64(leftA), float64(leftB))
+			return float64(Max(leftA, leftB))
 		} else if leftA > rightB {
 			end = mid - 1
 		} else {
@@ -50,4 +50,20 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 		}
 	}
 	return 0.0
+}
+
+// Max returns the largest of x or y.
+func Max(x, y int) int {
+	if x < y {
+		return y
+	}
+	return x
+}
+
+// Min returns the smallest of x or y.
+func Min(x, y int) int {
+	if x > y {
+		return y
+	}
+	return x
 }
